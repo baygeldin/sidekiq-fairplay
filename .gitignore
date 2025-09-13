@@ -1,0 +1,37 @@
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
+/tmp/
+spec/examples.txt
+.byebug_history
+
+## Documentation cache and generated files
+/.yardoc/
+/_yardoc/
+/doc/
+/rdoc/
+
+## Environment normalization
+/.bundle/
+/vendor/bundle
+/lib/bundler/man/
+
+# System files
+.DS_Store
+
+# Editors
+.vscode
+.ruby-lsp
+
+# Unnecessary for Ruby gems
+Gemfile.lock
+.ruby-version
+.ruby-gemset
+.tool-versions

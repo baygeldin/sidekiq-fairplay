@@ -1,0 +1,9 @@
+plugins:
+  - standard-performance
+  - standard-rspec
+
+ignore:
+  - 'spec/**/*_spec.rb':
+    - RSpec/MultipleMemoizedHelpers
+    - RSpec/MultipleExpectations
+    - RSpec/ExampleLength

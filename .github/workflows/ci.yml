@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    name: Test (Ruby ${{ matrix.ruby }}, Sidekiq ${{ matrix.sidekiq }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ['3.4']
+        sidekiq: ['7', '8']
+
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Select Gemfile for Sidekiq ${{ matrix.sidekiq }}
+        run: |
+          export BUNDLE_GEMFILE="gemfiles/sidekiq_${{ matrix.sidekiq }}.gemfile"
+          echo "BUNDLE_GEMFILE=$BUNDLE_GEMFILE" >> $GITHUB_ENV
+
+      - name: Bundle install
+        run: bundle install --jobs 4 --retry 3
+
+      - name: Run specs
+        env:
+          REDIS_URL: redis://localhost:6379/1
+        run: |
+          bundle exec rspec --format progress
+
+      - uses: qltysh/qlty-action/coverage@v2
+        if: matrix.sidekiq == '8' && matrix.ruby == '3.4'
+        with:
+          token: ${{secrets.QLTY_COVERAGE_TOKEN}}
+          files: coverage/.resultset.json
+
+  lint:
+    name: Lint (standardrb)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+
+      - name: Run StandardRB
+        run: bundle exec standardrb
