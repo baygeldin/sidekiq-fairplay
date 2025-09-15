@@ -62,16 +62,19 @@ Configure the client middleware on both client and server:
 ```ruby
 Sidekiq.configure_client do |config|
   config.client_middleware do |chain|
-    chain.add Sidekiq::Fairplay::Middleware
+    chain.prepend Sidekiq::Fairplay::Middleware
   end
 end
 
 Sidekiq.configure_server do |config|
   config.client_middleware do |chain|
-    chain.add Sidekiq::Fairplay::Middleware
+    chain.prepend Sidekiq::Fairplay::Middleware
   end
 end
 ```
+
+> [!TIP]
+> It's best to insert the middleware at the start of the chain using the [`#prepend` method](https://github.com/sidekiq/sidekiq/blob/d6395641571eba33050d34526bf93bed92504d4d/lib/sidekiq/middleware/chain.rb#L125), as shown above. This is important because `Sidekiq::Fairplay::Middleware` runs twice: first when you attempt to enqueue the job and it gets intercepted, and again when the planner actually enqueues it. If other middlewares are placed before it, this double execution can cause subtle issues. For example, if you use `unique_for`, you must ensure that `Sidekiq::Fairplay::Middleware` comes before `Sidekiq::Enterprise::Unique::Client`; otherwise, such jobs may lock themselves out of execution.
 
 ## API
 
@@ -171,8 +174,8 @@ We use two simple Redis-backed distributed locks:
    - Ensures only one planner per job class runs at a time.
    - Not strictly necessary (the first lock already prevents most issues), but adds safety.  
 
-⚠️ Note: If a planner takes longer than its `planner_lock_ttl`, multiple planners may run concurrently.  
-It's not the end of the world, but it means you probably should **optimize your `tenant_weights` logic** and/or increase the `enqueue_interval`.
+> [!WARNING]
+> If a planner takes longer than its `planner_lock_ttl`, multiple planners may run concurrently. It's not the end of the world, but it means you probably should **optimize your `tenant_weights` logic** and/or increase the `enqueue_interval`.
 
 ## Troubleshooting
 
