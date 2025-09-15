@@ -50,6 +50,12 @@ end
   </picture>
 </a>
 
+---
+
+> [!TIP]
+> **Looking for more background, alternative strategies, or further reading?**
+> Check out the [RESOURCES.md](./RESOURCES.md) file for additional articles, gems, and research on fair prioritization, shuffle-sharding, throttling, and more.
+
 ## Requirements
 - Ruby >= 3.4
 - Sidekiq >= 7
@@ -78,7 +84,7 @@ Sidekiq.configure_server do |config|
 end
 ```
 
-> [!TIP]
+> [!IMPORTANT]
 > It's best to insert the middleware at the start of the chain using the [`#prepend` method](https://github.com/sidekiq/sidekiq/blob/d6395641571eba33050d34526bf93bed92504d4d/lib/sidekiq/middleware/chain.rb#L125), as shown above. This is important because `Sidekiq::Fairplay::Middleware` runs twice: first when you attempt to enqueue the job and it gets intercepted, and again when the planner actually enqueues it. If other middlewares are placed before it, this double execution can cause subtle issues.
 
 ## API
