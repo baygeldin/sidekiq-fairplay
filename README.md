@@ -9,14 +9,19 @@
 > This gem is a reference implementation of the approach I describe in my EuRuKo 2025 talk *“Prioritization justice: lessons from making background jobs fair at scale”*.
 > While the approach itself is battle-tested in production in a real multi-tenant app with lots of users, the gem is not (yet). So, use at your own peril 🫣
 
-Are you treating your users fairly? They could be stuck in the queue while a greedy user monopolizes your workers—and you might not even know it! This gem implements fair background job prioritization for Sidekiq: instead of letting a single noisy tenant hog your queues, `sidekiq‑fairplay` enqueues jobs in balanced rounds, using dynamically calculated tenant weights. It works especially well in multi‑tenant apps, where you want *fairness* even when some tenants are "needier" than others.
+*Are you sure you're treating your users fairly? Some of them could be stuck in the queue while a greedy user monopolizes your workers!* 😱
 
-Take a look at the most basic example below: it intercepts all jobs you try to enqueue (e.g., via `HeavyJob.perform_async`) and slowly releases them into the main queue in batches of 100 jobs every minute, ensuring no tenant is forgotten.
+`sidekiq‑fairplay` implements fair background job prioritization for Sidekiq. Instead of letting a single noisy tenant hog your queues, it enqueues jobs in balanced rounds, using dynamically calculated tenant weights. It works especially well in multi‑tenant apps, where you want *fairness* even when some tenants are "needier" than others.
+
+To understand how it works, take a look at the example below:
 
 ```ruby
 class HeavyJob
   include Sidekiq::Job
   include Sidekiq::Fairplay::Job
+
+  # This intercepts all jobs you enqueue and gradually releases them into the main queue
+  # in batches of 100 jobs per minute, while ensuring that no user is left behind.
 
   sidekiq_fairplay_options(
     enqueue_interval: 1.minute,
@@ -74,7 +79,7 @@ end
 ```
 
 > [!TIP]
-> It's best to insert the middleware at the start of the chain using the [`#prepend` method](https://github.com/sidekiq/sidekiq/blob/d6395641571eba33050d34526bf93bed92504d4d/lib/sidekiq/middleware/chain.rb#L125), as shown above. This is important because `Sidekiq::Fairplay::Middleware` runs twice: first when you attempt to enqueue the job and it gets intercepted, and again when the planner actually enqueues it. If other middlewares are placed before it, this double execution can cause subtle issues. For example, if you use `unique_for`, you must ensure that `Sidekiq::Fairplay::Middleware` comes before `Sidekiq::Enterprise::Unique::Client`; otherwise, such jobs may lock themselves out of execution.
+> It's best to insert the middleware at the start of the chain using the [`#prepend` method](https://github.com/sidekiq/sidekiq/blob/d6395641571eba33050d34526bf93bed92504d4d/lib/sidekiq/middleware/chain.rb#L125), as shown above. This is important because `Sidekiq::Fairplay::Middleware` runs twice: first when you attempt to enqueue the job and it gets intercepted, and again when the planner actually enqueues it. If other middlewares are placed before it, this double execution can cause subtle issues.
 
 ## API
 
@@ -179,7 +184,8 @@ We use two simple Redis-backed distributed locks:
 
 ## Troubleshooting
 
-If you use Sidekiq Pro and are using `reliable_scheduler!`, then keep in mind that it bypasses the client middlewares. This essentially means that all jobs scheduled via `perform_in/perform_at` will bypass the planner and go directly into the main queue.
+- If you use Sidekiq Pro and are using `reliable_scheduler!`, then keep in mind that it bypasses the client middlewares. This essentially means that all jobs scheduled via `perform_in/perform_at` will bypass the planner and go directly into the main queue.
+- If you use `unique_for`, you must ensure that `Sidekiq::Fairplay::Middleware` comes before `Sidekiq::Enterprise::Unique::Client` in the client middleware chain; otherwise, such jobs may lock themselves out of execution.
 
 ## Development
 
