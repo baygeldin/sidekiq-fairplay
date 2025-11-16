@@ -1,7 +1,7 @@
 # Resources
 
 > [!NOTE]
-> Here you can find additional resources for my EuRuKo 2025 talk, *"Prioritization justice: lessons from making background jobs fair at scale"*. This document mainly covers three alternative approaches to fair prioritization: shuffle-sharding, interruptible iteration, and throttling.
+> Here you can find additional resources for my EuRuKo 2025 talk, *["Prioritization justice: lessons from making background jobs fair at scale"](https://youtu.be/Gzdl5hscPqE?si=zawvd3_mTZqQDpcl)*. This document mainly covers three alternative approaches to fair prioritization: shuffle-sharding, interruptible iteration, and throttling.
 
 ## Shuffle-sharding
 

@@ -6,7 +6,7 @@
 [![Maintainability](https://qlty.sh/gh/baygeldin/projects/sidekiq-fairplay/maintainability.svg)](https://qlty.sh/gh/baygeldin/projects/sidekiq-fairplay)
 
 > [!NOTE]
-> This gem is a reference implementation of the approach I describe in my EuRuKo 2025 talk *“Prioritization justice: lessons from making background jobs fair at scale”*.
+> This gem is a reference implementation of the approach I describe in my EuRuKo 2025 talk *[“Prioritization justice: lessons from making background jobs fair at scale”](https://youtu.be/Gzdl5hscPqE?si=zawvd3_mTZqQDpcl)*.
 > While the approach itself is battle-tested in production in a real multi-tenant app with lots of users, the gem is not (yet). So, use at your own peril 🫣
 
 *Are you sure you're treating your users fairly? Some of them could be stuck in the queue while a greedy user monopolizes your workers!* 😱
