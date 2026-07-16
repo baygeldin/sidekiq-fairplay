@@ -5,9 +5,8 @@
 [![Code Coverage](https://qlty.sh/gh/baygeldin/projects/sidekiq-fairplay/coverage.svg)](https://qlty.sh/gh/baygeldin/projects/sidekiq-fairplay)
 [![Maintainability](https://qlty.sh/gh/baygeldin/projects/sidekiq-fairplay/maintainability.svg)](https://qlty.sh/gh/baygeldin/projects/sidekiq-fairplay)
 
-> [!NOTE]
-> This gem is a reference implementation of the approach I describe in my EuRuKo 2025 talk *[“Prioritization justice: lessons from making background jobs fair at scale”](https://youtu.be/Gzdl5hscPqE?si=zawvd3_mTZqQDpcl)*.
-> While the approach itself is battle-tested in production in a real multi-tenant app with lots of users, the gem is not (yet). So, use at your own peril 🫣
+> [!TIP]
+> **Looking for more background, alternative strategies, or further reading on fair prioritization of background jobs?** Check out [this blog post](https://gist.github.com/baygeldin/8bc36d8d43741f1a3315229870ea5fca)!
 
 *Are you sure you're treating your users fairly? Some of them could be stuck in the queue while a greedy user monopolizes your workers!* 😱
 
@@ -51,10 +50,6 @@ end
 </a>
 
 ---
-
-> [!TIP]
-> **Looking for more background, alternative strategies, or further reading?**
-> Check out the [RESOURCES.md](./RESOURCES.md) file for additional articles, gems, and research on fair prioritization, shuffle-sharding, throttling, and more.
 
 ## Requirements
 - Ruby >= 3.4
