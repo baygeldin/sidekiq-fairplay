@@ -6,7 +6,7 @@
 [![Maintainability](https://qlty.sh/gh/baygeldin/projects/sidekiq-fairplay/maintainability.svg)](https://qlty.sh/gh/baygeldin/projects/sidekiq-fairplay)
 
 > [!TIP]
-> **Looking for more background, alternative strategies, or further reading on fair prioritization of background jobs?** Check out [this blog post](https://gist.github.com/baygeldin/8bc36d8d43741f1a3315229870ea5fca)!
+> **Looking for more background, alternative strategies, or further reading on fair prioritization of background jobs?** Check out [this blog post](https://evilmartians.com/chronicles/fair-by-design-orchestrating-background-jobs-in-ruby)!
 
 *Are you sure you're treating your users fairly? Some of them could be stuck in the queue while a greedy user monopolizes your workers!* 😱
 
